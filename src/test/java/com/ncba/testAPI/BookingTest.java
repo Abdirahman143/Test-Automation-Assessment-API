@@ -217,7 +217,7 @@ public class BookingTest {
 
     @Test(priority = 7, description = "Update a booking")
     public void testUpdateBooking() {
-        test = extent.createTest("Update a booking");
+        test = extent.createTest("Verify update booking with correct data should return success");
         logger.info("Updating Booking details");
 
         // Create a new booking request
@@ -265,7 +265,7 @@ public class BookingTest {
 
     @Test(priority = 7, description = "Partial Update a booking")
     public void testPartialUpdateBooking() {
-        test = extent.createTest("Partial Update a booking");
+        test = extent.createTest("Verify partial update with correct data should return success");
         logger.info("Partially Updating Booking details");
 
         // Define the booking ID you want to update
@@ -295,6 +295,33 @@ public class BookingTest {
         assertThat(response.getStatusCode()).isEqualTo(200);
 
         // You can add additional assertions here if needed
+    }
+    @Test(priority = 8, description = "Delete a booking")
+    public void testDeleteBooking() {
+        test = extent.createTest("Verify delete booking should return success");
+        logger.info("Deleting a Booking");
+
+        // Define the booking ID you want to delete
+        int bookingId = 2;
+
+        // Set the authentication token or authorization header if needed
+        String authToken = AuthTokenTest.authToken;
+        String base64Credentials = "YWRtaW46cGFzc3dvcmQxMjM=";
+
+        // Send the DELETE request
+        Response response = given()
+                .baseUri(RestAssured.baseURI)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("Cookie", "token=" + authToken) // Use Cookie for authorization, or use Authorization header if needed
+                .delete("/" + bookingId); // Append the bookingId to the base path
+
+        logger.info("Response body: " + response.getBody().asString());
+
+        // Assert status code (HTTP 201 Created for success)
+        assertThat(response.getStatusCode()).isEqualTo(201);
+
+
     }
 
 
