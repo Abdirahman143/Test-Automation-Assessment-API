@@ -26,6 +26,7 @@ public class AuthTokenTest {
     private AuthTokenRequest authTokenRequest;
     private ExtentReports extent;
     private ExtentTest test;
+    public static String authToken;
 
 
     @BeforeMethod
@@ -48,9 +49,10 @@ public class AuthTokenTest {
                 .when()
                 .post(BookingRoute.BASE_URL + "/auth");
 
-        AuthTokenResponse authTokenResponse = response.as(AuthTokenResponse.class);
 
-        logger.info("Auth token received: {}", authTokenResponse.getToken());
+        AuthTokenResponse authTokenResponse = response.as(AuthTokenResponse.class);
+              authToken =authTokenResponse.getToken();
+        logger.info("Auth token received: {}",authToken);
 
         assertThat(authTokenResponse.getToken()).as("Check if token is not null or empty")
                 .isNotNull()
