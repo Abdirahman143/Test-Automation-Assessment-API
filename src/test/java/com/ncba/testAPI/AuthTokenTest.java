@@ -26,6 +26,7 @@ public class AuthTokenTest {
     private AuthTokenRequest authTokenRequest;
     private ExtentReports extent;
     private ExtentTest test;
+    public static String authToken;
 
 
     @BeforeMethod
@@ -40,6 +41,7 @@ public class AuthTokenTest {
     @Test(priority = 1)
 
     public void testAuthTokenGeneration() {
+
      test= extent.createTest("Verify user can generate token after passing valid username and password");
         Response response = given()
                 .contentType("application/json")
@@ -47,15 +49,39 @@ public class AuthTokenTest {
                 .when()
                 .post(BookingRoute.BASE_URL + "/auth");
 
-        AuthTokenResponse authTokenResponse = response.as(AuthTokenResponse.class);
 
-        logger.info("Auth token received: {}", authTokenResponse.getToken());
+        AuthTokenResponse authTokenResponse = response.as(AuthTokenResponse.class);
+              authToken =authTokenResponse.getToken();
+        logger.info("Auth token received: {}",authToken);
 
         assertThat(authTokenResponse.getToken()).as("Check if token is not null or empty")
                 .isNotNull()
                 .isNotEmpty();
 
 
+    }
+    @Test
+    public void testAuthTokenGenerationWithInvalidCredential() {
+        AuthTokenRequest authTokenRequest = AuthTokenRequest.builder()
+                .username("admin")
+                .password("password1237") // wrong password
+                .build();
+        test = extent.createTest("Verify user should not generate token after passing Invalid username or password");
+        Response response = given()
+                .contentType("application/json")
+                .body(authTokenRequest)
+                .when()
+                .post(BookingRoute.BASE_URL + "/auth");
+
+        if (response.statusCode() == 200) {
+            AuthTokenResponse authTokenResponse = response.as(AuthTokenResponse.class);
+            logger.info("Auth token received: {}", authTokenResponse.getToken());
+            assertThat(authTokenResponse.getToken()).as("Check if token is not null or empty")
+                    .isNullOrEmpty();
+        } else {
+            // Handle error response
+            logger.error("Failed to generate auth token: {}", response.asString());
+        }
     }
 
     @AfterMethod
