@@ -253,7 +253,7 @@ public class BookingTest {
                 .header("Authorization", "Basic " + base64Credentials) // Set Basic authorization header
                 .contentType("application/json")
                 .body(validJson)
-                .put("https://restful-booker.herokuapp.com/booking/1");
+                .put(RestAssured.baseURI +"/1");
 
         logger.info("Response body: " + response.getBody().asString());
 
@@ -262,6 +262,42 @@ public class BookingTest {
 
 
     }
+
+    @Test(priority = 7, description = "Partial Update a booking")
+    public void testPartialUpdateBooking() {
+        test = extent.createTest("Partial Update a booking");
+        logger.info("Partially Updating Booking details");
+
+        // Define the booking ID you want to update
+        int bookingId = 1;
+
+        // Define the fields to update in the request body
+        String requestBody = "{\n" +
+                "    \"firstname\": \"James\",\n" +
+                "    \"lastname\": \"Brown\"\n" +
+                "}";
+
+        // Set the authentication token from your test class
+        String authToken = AuthTokenTest.authToken;
+
+        // Send the PATCH request
+        Response response = given()
+                .baseUri(RestAssured.baseURI)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("Cookie", "token=" + authToken) // Use Cookie for authorization, or use Authorization header if needed
+                .body(requestBody)
+                .patch("/" + bookingId); // Append the bookingId to the base path
+
+        logger.info("Response body: " + response.getBody().asString());
+
+        // Assert status code (HTTP 200 OK for success)
+        assertThat(response.getStatusCode()).isEqualTo(200);
+
+        // You can add additional assertions here if needed
+    }
+
+
     @AfterMethod
     public void tearDown(ITestResult result) {
         if (result.getStatus() == ITestResult.FAILURE) {
