@@ -1,4 +1,4 @@
-package com.ncba.pojo.Responose;
+package com.ncba.pojo.Request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthTokenResponse {
-    private String token;
-    private String reason;
+public class BookingId {
+    private int bookingid;
 }
